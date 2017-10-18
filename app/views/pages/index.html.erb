@@ -1,0 +1,48 @@
+<div id="demo"></div>
+<button onclick="getLocation()">Try it</button>
+<br>
+<%= label_tag "latitude" %>
+<%= text_field_tag "latitude" %> <br>
+<%= label_tag "longitude" %>
+<%= text_field_tag "longitude" %>
+<br>
+<button name="enviar">Obtener Dirección</button>
+<br>
+<div id="direccion"></div>
+
+<hr>
+<h3>Usuarios Cercanos</h3>
+
+<%= render 'usuarios_cercanos', nearbys: @nearbys %>
+
+<script>
+  var x = document.getElementById('demo');
+  function getLocation(){
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    }else{
+      x.innerHTML = "Geolocalización no está soportada por este navegador";
+    }
+  }
+
+  function showPosition(position){
+    x.innerHTML = "Latitude: " + position.coords.latitude + "<br> Longitude: " + position.coords.longitude;
+    $("#latitude").val(position.coords.latitude);
+    $("#longitude").val(position.coords.longitude);
+  }
+
+  $("button[name = 'enviar']").on('click', function(){
+    var lat = $("#latitude").val();
+    var lng = $("#longitude").val();
+
+    $.ajax({
+      url: '<%= pages_location_path %>',
+      type: 'POST',
+      dataType: 'script',
+      data: {
+        latitude: lat,
+        longitude: lng
+      },
+    })
+  });
+</script>
